@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tech - Eastern Veil</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Tech Page Specific Styles */
+        .tech-hero {
+            padding: calc(var(--space-2xl) + 60px) var(--space-xl) var(--space-xl);
+            text-align: center;
+        }
+
+        .tech-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: var(--space-md);
+        }
+
+        .tech-subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .islands-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            padding: var(--space-2xl) var(--space-xl);
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        @media (max-width: 900px) {
+            .islands-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .island-wrapper {
+            perspective: 1000px;
+            z-index: 10;
+        }
+
+        .island {
+            width: min(100%, 650px);
+            background: var(--bg-surface);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            padding: var(--space-lg);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; /* Smooth JS tracking */
+            will-change: transform;
+            /* Neomorphic depth */
+            box-shadow: 
+                20px 20px 60px rgba(0, 0, 0, 0.5),
+                -10px -10px 40px rgba(74, 144, 226, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .island::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.3), transparent 50%, rgba(215, 38, 61, 0.3));
+            z-index: -1;
+            transform: translateZ(-1px);
+        }
+
+        .island-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(74, 144, 226, 0.15);
+            padding-bottom: var(--space-md);
+            margin-bottom: var(--space-md);
+            transform: translateZ(20px); /* Pop out layer */
+        }
+
+        .island-meta {
+            color: var(--text-muted);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .island-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: var(--accent-red);
+        }
+
+        .island-content {
+            transform: translateZ(30px); /* Higher pop */
+        }
+
+        .island h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .island p {
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .island-visual {
+            height: 200px;
+            margin-top: var(--space-lg);
+            border: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.5);
+            position: relative;
+            transform: translateZ(10px);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .island-visual::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        /* Abstract shapes inside visual boxes */
+        .shape-core {
+            width: 80px;
+            height: 80px;
+            border: 1px solid var(--accent-red);
+            border-radius: 50%;
+            position: relative;
+            animation: rotate 10s linear infinite;
+        }
+        .shape-core::before {
+            content:''; position: absolute; inset: -20px;
+            border: 1px dashed rgba(215, 38, 61, 0.4);
+            border-radius: 50%;
+        }
+        
+        .shape-grid {
+            width: 100px;
+            height: 100px;
+            border: 1px solid var(--accent-blue);
+            transform: rotateX(45deg) rotateZ(45deg);
+            background: linear-gradient(135deg, transparent, rgba(74, 144, 226, 0.1));
+            animation: pulse-border 4s ease-in-out infinite;
+        }
+
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes pulse-border { 50% { box-shadow: 0 0 20px var(--accent-blue-glow); } }
+
+        @media (max-width: 900px) {
+            .islands-container::before { display: none; }
+            .island-wrapper:nth-child(even), .island-wrapper:nth-child(odd) {
+                align-self: center;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+
+    <nav-section></nav-section>
+
+    <main>
+        <tech-hero></tech-hero>
+
+        <section class="islands-container">
+            <tech-proj-1></tech-proj-1>
+            <tech-proj-2></tech-proj-2>
+            <tech-proj-3></tech-proj-3>
+        </section>
+    </main>
+
+    <footer-section></footer-section>
+
+    <!-- Component Modules -->
+    <script type="module" src="components/NavSection.js"></script>
+    <script type="module" src="components/TechHero.js"></script>
+    <script type="module" src="components/Proj1.js"></script>
+    <script type="module" src="components/Proj2.js"></script>
+    <script type="module" src="components/Proj3.js"></script>
+    <script type="module" src="components/FooterSection.js"></script>
+
+    <!-- Core Interaction Scripts -->
+    <script src="main.js"></script>
+    <script src="cursor.js"></script>
+</body>
+</html>
