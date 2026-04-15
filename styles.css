@@ -156,9 +156,15 @@ a:hover {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    font-size: 2rem;
+    transition: all var(--transition-fast);
+}
+
+.logo:hover {
+    color: var(--text-primary);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6);
 }
 
 .nav-logo-img {
@@ -408,7 +414,7 @@ a:hover {
 
 .mission-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 1px; /* Borders via background */
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid #ffffff;
@@ -682,15 +688,111 @@ a:hover {
    ========================================================================== */
 
 @media (min-width: 768px) {
-    /* (Desktop specific styles) */
+    .mobile-menu-btn {
+        display: none;
+    }
 }
 
 @media (max-width: 768px) {
+    /* Layout & Spacing */
+    .section-panel {
+        padding: var(--space-lg) var(--space-md);
+    }
+    
+    .hero-title {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+    
+    .hero-top-meta {
+        font-size: 10px;
+        padding: var(--space-xs) var(--space-sm);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .hero-content {
+        padding: 0 var(--space-md);
+        gap: var(--space-lg);
+    }
+    
+    /* Footer */
     .footer-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-lg);
+    }
+    
+    .footer-col:first-child {
+        grid-column: 1 / -1;
+        margin-bottom: var(--space-md);
+    }
+    
+    .footer-col:first-child > div {
+        justify-content: center;
+    }
+    
+    .main-footer {
+        padding: var(--space-lg) var(--space-md) var(--space-md);
+    }
+    
+    /* Navigation Dropdown */
+    .mobile-menu-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 110;
+        padding: 0;
+    }
+    
+    .mobile-menu-btn .bar {
+        height: 2px;
+        width: 100%;
+        background-color: var(--text-primary);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-btn.is-open .line1 {
+        transform: translateY(9px) rotate(45deg);
+    }
+    .mobile-menu-btn.is-open .line2 {
+        opacity: 0;
+    }
+    .mobile-menu-btn.is-open .line3 {
+        transform: translateY(-9px) rotate(-45deg);
     }
     
     .nav-links {
-        display: none; /* In a real app, add mobile menu toggle */
+        position: fixed;
+        top: 90px;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-color);
+        flex-direction: column;
+        padding: var(--space-xl) var(--space-lg);
+        gap: var(--space-xl);
+        transform: translateY(-150%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-base);
+        z-index: 105;
+        align-items: center;
+    }
+    
+    .nav-links.is-open {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .nav-links a {
+        font-size: 1.2rem;
     }
 }

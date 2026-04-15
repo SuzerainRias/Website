@@ -1,7 +1,7 @@
 class AboutSocials extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl);">
+        <div class="socials-grid">
             <div class="team-section fade-up">
                 <div class="team-title">SOCIALS</div>
                 <div class="team-grid">

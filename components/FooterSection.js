@@ -6,7 +6,7 @@ class FooterSection extends HTMLElement {
                     <div class="footer-col">
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <img src="assets/logo.png" alt="Eastern Veil Logo" style="height: 90px; width: auto; mix-blend-mode: screen;">
-                            <span class="footer-logo" style="margin: 0; font-size: 2.2rem; font-family: 'Syne', sans-serif; font-weight: bold;">EasternVeil</span>
+                            <span class="footer-logo" style="margin: 0; font-size: 3.5rem; font-family: 'Syne', sans-serif; font-weight: 500; letter-spacing: normal;">Eastern Veil</span>
                         </div>
                     </div>
                     <div class="footer-col">
