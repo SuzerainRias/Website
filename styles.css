@@ -37,7 +37,7 @@
     --space-2xl: 128px;
     
     /* Grid Size */
-    --grid-size: 80px;
+    --grid-size: 79.5px;
     
     /* Transitions */
     --transition-fast: 150ms ease-out;
@@ -53,6 +53,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+html {
+    font-size: 16px;
 }
 
 body {
@@ -76,30 +85,23 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     pointer-events: none;
     z-index: -1;
-    background-size: var(--grid-size) var(--grid-size);
+    background-size: calc(var(--grid-size) * 4) calc(var(--grid-size) * 4);
+    background-position: calc(50% + (var(--grid-size) * 2)) 0;
     background-image: 
-        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+        linear-gradient(to right, var(--grid-line-strong) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line-strong) 1px, transparent 1px);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 100%);
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 100%);
 }
 
-/* Add stronger markers at intersections */
-.grid-overlay::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: calc(var(--grid-size) * 4) calc(var(--grid-size) * 4);
-    background-image: 
-        linear-gradient(to right, var(--grid-line-strong) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-line-strong) 1px, transparent 1px);
+@media (max-width: 1400px) {
+    .grid-overlay {
+        background-position: var(--space-xl) 0;
+    }
 }
 
 /* ==========================================================================
@@ -131,14 +133,17 @@ a:hover {
 
 .main-nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 90px;
+    top: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - var(--space-xl) * 2);
+    max-width: 1400px;
+    height: 72px;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-color);
+    border: 1px solid #ffffff;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.02);
     z-index: 100;
 }
 
@@ -147,9 +152,8 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    padding: 0 var(--space-xl);
-    max-width: 1600px;
-    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    width: 100%;
 }
 
 .logo {
@@ -695,6 +699,10 @@ a:hover {
 
 @media (max-width: 768px) {
     /* Layout & Spacing */
+    .grid-overlay {
+        background-position: var(--space-md) 0;
+    }
+
     .section-panel {
         padding: var(--space-lg) var(--space-md);
     }
@@ -766,12 +774,20 @@ a:hover {
         transform: translateY(-9px) rotate(-45deg);
     }
     
+    .main-nav {
+        width: calc(100% - var(--space-md) * 2);
+        top: var(--space-sm);
+        height: 64px;
+    }
+
     .nav-links {
         position: fixed;
-        top: 90px;
-        left: 0;
-        width: 100%;
+        top: calc(var(--space-sm) + 64px + var(--space-sm));
+        left: var(--space-md);
+        width: calc(100% - var(--space-md) * 2);
         background: rgba(0, 0, 0, 0.95);
+        border: 1px solid #ffffff;
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid var(--border-color);

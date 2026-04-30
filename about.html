@@ -161,30 +161,44 @@
             font-weight: 700;
         }
 
-        .team-section {
+        .socials-master-grid {
+            display: grid;
+            grid-template-columns: 636px 636px;
+            border-top: 1px solid #ffffff;
             padding-top: var(--space-xl);
-            border-top: 1px solid var(--border-color);
+            justify-content: center;
         }
-        
+
+        .socials-block {
+            display: grid;
+            grid-template-columns: 318px 318px;
+            row-gap: var(--space-md);
+            align-content: start;
+        }
+
         .team-title {
             font-family: var(--font-mono);
             font-size: 14px;
             color: var(--accent-red);
             letter-spacing: 0.1em;
-            margin-bottom: var(--space-lg);
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: var(--space-md);
+            margin: 0 var(--space-md);
+            padding-bottom: var(--space-xs);
+            grid-column: 1 / -1;
         }
 
         .team-member {
             border: 1px solid rgba(215, 38, 61, 0.15);
             padding: var(--space-md);
+            margin: 0 var(--space-md);
             background: var(--bg-surface);
             transition: all 0.2s;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            min-height: 80px;
         }
         
         .team-member:hover {
@@ -204,20 +218,18 @@
             font-size: 12px;
         }
 
-        .socials-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .about-grid {
+        @media (max-width: 1400px) {
+            .socials-master-grid {
                 grid-template-columns: 1fr;
+                gap: var(--space-xl);
             }
-            .about-meta {
-                position: static;
+            .socials-block {
+                grid-template-columns: 1fr 1fr;
             }
-            .socials-grid {
+        }
+        
+        @media (max-width: 768px) {
+            .socials-block {
                 grid-template-columns: 1fr;
             }
         }
@@ -238,7 +250,7 @@
             </div>
         </section>
 
-        <section style="max-width: 1300px; margin: 0 auto; padding: 0 var(--space-xl) var(--space-xl);">
+        <section style="max-width: 1400px; margin: 0 auto; padding: 0 var(--space-xl) var(--space-xl);">
             <about-socials></about-socials>
         </section>
     </main>

@@ -109,8 +109,8 @@ class HeroSection extends HTMLElement {
                     vColor = color;
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                     float dist = length(mvPosition.xyz);
-                    // Twinkle
-                    vOpacity = 0.5 + 0.5 * abs(sin(uTime * 0.5 + position.x * 0.1 + position.y * 0.1));
+                    // Twinkle with higher base opacity for non-LED screens
+                    vOpacity = 0.8 + 0.5 * abs(sin(uTime * 0.5 + position.x * 0.1 + position.y * 0.1));
                     gl_PointSize = size * (600.0 / dist);
                     gl_Position = projectionMatrix * mvPosition;
                 }
@@ -121,9 +121,15 @@ class HeroSection extends HTMLElement {
                 void main() {
                     float d = length(gl_PointCoord - vec2(0.5));
                     if (d > 0.5) discard;
+                    
+                    // Brighter, sharper core so it stands out on standard monitors
+                    float core = 1.0 - smoothstep(0.0, 0.15, d);
                     // Soft glow falloff
                     float glow = 1.0 - smoothstep(0.0, 0.5, d);
-                    gl_FragColor = vec4(vColor, glow * vOpacity);
+                    
+                    // Boost the color brightness at the core
+                    vec3 finalColor = vColor + vec3(core * 0.6);
+                    gl_FragColor = vec4(finalColor, (glow + core) * vOpacity);
                 }
             `,
             transparent: true,
@@ -134,90 +140,6 @@ class HeroSection extends HTMLElement {
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-        // =====================================================================
-        // 2. Star Clusters (dense pockets)
-        // =====================================================================
-        const CLUSTER_COUNT = 5;
-        for (let c = 0; c < CLUSTER_COUNT; c++) {
-            const clusterStarCount = 120 + Math.floor(Math.random() * 80);
-            const clusterGeo = new THREE.BufferGeometry();
-            const cPos = new Float32Array(clusterStarCount * 3);
-            const cColors = new Float32Array(clusterStarCount * 3);
-            const cSizes = new Float32Array(clusterStarCount);
-
-            // Cluster center
-            const cx = (Math.random() - 0.5) * 800;
-            const cy = (Math.random() - 0.5) * 600;
-            const cz = -200 - Math.random() * 1000;
-            const clusterColor = Math.random() > 0.5 ? BLUE : RED;
-
-            for (let i = 0; i < clusterStarCount; i++) {
-                const i3 = i * 3;
-                // Gaussian-ish distribution around center
-                const r = 30 + Math.random() * 60;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.random() * Math.PI;
-                cPos[i3]     = cx + r * Math.sin(phi) * Math.cos(theta);
-                cPos[i3 + 1] = cy + r * Math.sin(phi) * Math.sin(theta);
-                cPos[i3 + 2] = cz + r * Math.cos(phi);
-
-                // Mix cluster tint with white
-                const mix = 0.3 + Math.random() * 0.7;
-                const sc = clusterColor.clone().lerp(WHITE, mix);
-                cColors[i3]     = sc.r;
-                cColors[i3 + 1] = sc.g;
-                cColors[i3 + 2] = sc.b;
-
-                cSizes[i] = Math.random() * 1.8 + 0.3;
-            }
-
-            clusterGeo.setAttribute('position', new THREE.BufferAttribute(cPos, 3));
-            clusterGeo.setAttribute('color', new THREE.BufferAttribute(cColors, 3));
-            clusterGeo.setAttribute('size', new THREE.BufferAttribute(cSizes, 1));
-
-            const clusterPoints = new THREE.Points(clusterGeo, starMaterial);
-            scene.add(clusterPoints);
-        }
-
-        // =====================================================================
-        // 3. Nebula Clouds (soft glowing sprites)
-        // =====================================================================
-        const nebulaCanvas = document.createElement('canvas');
-        nebulaCanvas.width = 128;
-        nebulaCanvas.height = 128;
-        const nctx = nebulaCanvas.getContext('2d');
-        const grad = nctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-        grad.addColorStop(0, 'rgba(255,255,255,0.15)');
-        grad.addColorStop(0.4, 'rgba(255,255,255,0.05)');
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-        nctx.fillStyle = grad;
-        nctx.fillRect(0, 0, 128, 128);
-        const nebulaTexture = new THREE.CanvasTexture(nebulaCanvas);
-
-        const NEBULA_COUNT = 8;
-        for (let n = 0; n < NEBULA_COUNT; n++) {
-            const nebColor = n % 2 === 0
-                ? new THREE.Color(0.29, 0.56, 0.88)   // blue-ish
-                : new THREE.Color(0.84, 0.15, 0.24);  // red-ish
-            nebColor.multiplyScalar(0.4); // dim it
-
-            const spriteMat = new THREE.SpriteMaterial({
-                map: nebulaTexture,
-                color: nebColor,
-                transparent: true,
-                opacity: 0.12 + Math.random() * 0.08,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false,
-            });
-            const sprite = new THREE.Sprite(spriteMat);
-            sprite.position.set(
-                (Math.random() - 0.5) * 1000,
-                (Math.random() - 0.5) * 600,
-                -300 - Math.random() * 900
-            );
-            sprite.scale.set(200 + Math.random() * 300, 200 + Math.random() * 300, 1);
-            scene.add(sprite);
-        }
 
         // =====================================================================
         // 4. Animation Loop – Forward Flight & Warp Speed
@@ -276,11 +198,11 @@ class HeroSection extends HTMLElement {
                 const i3 = i * 3;
                 positions[i3 + 2] += flightSpeed;
 
-                // When a star passes the camera, respawn it far away
+                // When a star passes the camera, respawn it far away with random staggered depth
                 if (positions[i3 + 2] > 10) {
                     positions[i3]     = (Math.random() - 0.5) * 2000;
                     positions[i3 + 1] = (Math.random() - 0.5) * 2000;
-                    positions[i3 + 2] = -STAR_DEPTH;
+                    positions[i3 + 2] = -STAR_DEPTH - Math.random() * 1000;
                 }
             }
             starGeometry.attributes.position.needsUpdate = true;
