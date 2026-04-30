@@ -12,13 +12,13 @@ class MissionStatement extends HTMLElement {
                     <div style="display: flex; gap: var(--space-xl); margin-bottom: var(--space-xl); flex-wrap: wrap;">
                         <div style="flex: 1; min-width: min(100%, 300px);">
                             <h3 style="color: var(--accent-blue); font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.1em; margin-bottom: var(--space-sm);">MISSION</h3>
-                            <h2 class="mission-text" style="font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 0;">
+                            <h2 class="mission-text" style="font-size: clamp(1.35rem, 2.5vw, 1.85rem); margin-bottom: 0;">
                                 To build the infrastructure that enables faster, higher-quality, and more cost-effective development of space systems.
                             </h2>
                         </div>
                         <div style="flex: 1; min-width: min(100%, 300px);">
                             <h3 style="color: var(--accent-red); font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.1em; margin-bottom: var(--space-sm);">VISION</h3>
-                            <h2 class="mission-text" style="font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 0;">
+                            <h2 class="mission-text" style="font-size: clamp(1.35rem, 2.5vw, 1.85rem); margin-bottom: 0;">
                                 A future where any type of spacecraft can be developed within weeks, achieving true space accessibility and dramatically reducing complexity.
                             </h2>
                         </div>

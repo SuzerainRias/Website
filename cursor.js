@@ -33,9 +33,9 @@
             height: 8px;
             background: #fff;
             box-shadow:
-                0 0  6px 2px rgba(74, 144, 226, 0.9),
-                0 0 14px 4px rgba(74, 144, 226, 0.5),
-                0 0 28px 8px rgba(74, 144, 226, 0.2);
+                0 0  6px 2px rgba(37, 206, 224, 0.9),
+                0 0 14px 4px rgba(37, 206, 224, 0.5),
+                0 0 28px 8px rgba(37, 206, 224, 0.2);
         }
 
         #cursor-proxima {
@@ -60,10 +60,18 @@
     let lastMoveTime = 0;
     let orbitAngle = 0;
     const IDLE_THRESHOLD = 150; // ms before entering orbit mode
-    const ORBIT_RADIUS = 10;
+    const ORBIT_RADIUS = 14;
     const ORBIT_SPEED = 0.03; // radians per frame
 
+    let firstMove = true;
     document.addEventListener('mousemove', e => {
+        if (firstMove) {
+            proxX = e.clientX;
+            proxY = e.clientY;
+            betaX = e.clientX;
+            betaY = e.clientY;
+            firstMove = false;
+        }
         mouseX = e.clientX;
         mouseY = e.clientY;
         lastMoveTime = performance.now();
@@ -81,6 +89,11 @@
 
     // --- Animation loop ---
     function animate() {
+        if (firstMove) {
+            requestAnimationFrame(animate);
+            return; // Don't animate until mouse enters
+        }
+
         // Beta follows mouse instantly
         betaX = mouseX;
         betaY = mouseY;
@@ -97,35 +110,23 @@
             // Smooth transition into orbit
             proxX += (targetX - proxX) * 0.1;
             proxY += (targetY - proxY) * 0.1;
-
-            beta.style.transform = `translate(${betaX - 4}px, ${betaY - 4}px)`;
-            proxima.style.transform = `translate(${proxX - 3}px, ${proxY - 3}px)`;
+            
         } else {
-            // Trail mode: Proxima follows Beta with lag
+            // Trail mode: Proxima follows Beta naturally
             const ease = 0.15;
             proxX += (betaX - proxX) * ease;
             proxY += (betaY - proxY) * ease;
 
-            // Offset Proxima 10px behind Beta (along the direction of travel)
-            const dx = betaX - proxX;
-            const dy = betaY - proxY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            let offsetX = 0, offsetY = 0;
-            if (dist > 0.5) {
-                offsetX = -(dx / dist) * 10;
-                offsetY = -(dy / dist) * 10;
+            // Sync the orbit angle so transition to idle is seamless
+            const dx = proxX - betaX;
+            const dy = proxY - betaY;
+            if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+                orbitAngle = Math.atan2(dy, dx);
             }
-
-            // Keep orbit angle synced to current position so transition is seamless
-            orbitAngle = Math.atan2(
-                (proxX + offsetX) - betaX,
-                (proxY + offsetY) - betaY
-            );
-
-            beta.style.transform = `translate(${betaX - 4}px, ${betaY - 4}px)`;
-            proxima.style.transform = `translate(${proxX + offsetX - 3}px, ${proxY + offsetY - 3}px)`;
         }
+
+        beta.style.transform = `translate(${betaX - 4}px, ${betaY - 4}px)`;
+        proxima.style.transform = `translate(${proxX - 3}px, ${proxY - 3}px)`;
 
         requestAnimationFrame(animate);
     }

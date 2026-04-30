@@ -6,7 +6,6 @@ class NewsTransmissions extends HTMLElement {
                 <div class="panel-header">
                     <span class="panel-id">SEC 02</span>
                     <span class="panel-title">NEWS</span>
-                    <span class="panel-status">LIVE</span>
                 </div>
                 
                 <div class="panel-body" style="padding: 0;">

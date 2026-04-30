@@ -47,11 +47,11 @@ class HeroSection extends HTMLElement {
 
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         container.appendChild(renderer.domElement);
 
         // Accent colors (from site palette)
-        const BLUE = new THREE.Color('#4a90e2');
+        const BLUE = new THREE.Color('#25cee0');
         const RED = new THREE.Color('#d7263d');
         const WHITE = new THREE.Color('#ffffff');
 
@@ -70,7 +70,7 @@ class HeroSection extends HTMLElement {
             const i3 = i * 3;
             starPositions[i3]     = (Math.random() - 0.5) * 2000;    // x spread
             starPositions[i3 + 1] = (Math.random() - 0.5) * 2000;    // y spread
-            starPositions[i3 + 2] = -Math.random() * STAR_DEPTH;     // z depth (behind camera)
+            starPositions[i3 + 2] = -Math.random() * (STAR_DEPTH + 1000); // spread across deep space
 
             // Color: mostly white, some blue, some red
             const roll = Math.random();
@@ -88,7 +88,7 @@ class HeroSection extends HTMLElement {
             starColors[i3 + 1] = color.g;
             starColors[i3 + 2] = color.b;
 
-            starSizes[i] = Math.random() * 5.0 + 1.5;
+            starSizes[i] = Math.random() * 6.0 + 2.5;
         }
 
         starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
@@ -97,7 +97,8 @@ class HeroSection extends HTMLElement {
 
         const starMaterial = new THREE.ShaderMaterial({
             uniforms: {
-                uTime: { value: 0 }
+                uTime: { value: 0 },
+                uTravelDistance: { value: 0 }
             },
             vertexShader: `
                 attribute float size;
@@ -105,12 +106,21 @@ class HeroSection extends HTMLElement {
                 varying vec3 vColor;
                 varying float vOpacity;
                 uniform float uTime;
+                uniform float uTravelDistance;
                 void main() {
                     vColor = color;
-                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    vec3 pos = position;
+                    
+                    // GPU-accelerated infinite forward wrapping
+                    float depth = 2200.0;
+                    float currentZ = pos.z + uTravelDistance;
+                    pos.z = mod(currentZ - 10.0, depth) - depth + 10.0;
+
+                    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
                     float dist = length(mvPosition.xyz);
+                    
                     // Twinkle with higher base opacity for non-LED screens
-                    vOpacity = 0.8 + 0.5 * abs(sin(uTime * 0.5 + position.x * 0.1 + position.y * 0.1));
+                    vOpacity = 0.8 + 0.5 * abs(sin(uTime * 0.5 + pos.x * 0.1 + pos.y * 0.1));
                     gl_PointSize = size * (600.0 / dist);
                     gl_Position = projectionMatrix * mvPosition;
                 }
@@ -151,6 +161,7 @@ class HeroSection extends HTMLElement {
         let baseFov = 75;
         let targetFov = baseFov;
         let time = 0;
+        let travelDistance = 0;
 
         const onPointerDown = () => {
             if (!prefersReducedMotion) {
@@ -185,27 +196,19 @@ class HeroSection extends HTMLElement {
 
         function animate() {
             // Interpolate Speed and FOV smoothly
-            flightSpeed += (targetSpeed - flightSpeed) * 0.05;
-            camera.fov += (targetFov - camera.fov) * 0.05;
-            camera.updateProjectionMatrix();
+            flightSpeed += (targetSpeed - flightSpeed) * 0.12;
+            
+            // Only update expensive projection matrix if FOV actually needs changing
+            if (Math.abs(targetFov - camera.fov) > 0.1) {
+                camera.fov += (targetFov - camera.fov) * 0.12;
+                camera.updateProjectionMatrix();
+            }
 
             time += 0.016; // ~60fps step
+            travelDistance += flightSpeed;
+            
             starMaterial.uniforms.uTime.value = time;
-
-            // Move all stars towards the camera (positive Z)
-            const positions = starGeometry.attributes.position.array;
-            for (let i = 0; i < STAR_COUNT; i++) {
-                const i3 = i * 3;
-                positions[i3 + 2] += flightSpeed;
-
-                // When a star passes the camera, respawn it far away with random staggered depth
-                if (positions[i3 + 2] > 10) {
-                    positions[i3]     = (Math.random() - 0.5) * 2000;
-                    positions[i3 + 1] = (Math.random() - 0.5) * 2000;
-                    positions[i3 + 2] = -STAR_DEPTH - Math.random() * 1000;
-                }
-            }
-            starGeometry.attributes.position.needsUpdate = true;
+            starMaterial.uniforms.uTravelDistance.value = travelDistance;
 
             // Smooth camera look-around
             currentRotX += (targetRotX - currentRotX) * 0.05;

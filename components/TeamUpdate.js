@@ -6,7 +6,6 @@ class TeamUpdate extends HTMLElement {
                 <div class="panel-header">
                     <span class="panel-id">SEC 03</span>
                     <span class="panel-title">UPDATE FROM THE TEAM</span>
-                    <span class="panel-status">STANDBY</span>
                 </div>
                 
                 <div class="panel-body">

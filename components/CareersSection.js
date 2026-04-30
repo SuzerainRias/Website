@@ -40,7 +40,7 @@ class CareersSection extends HTMLElement {
                 color: var(--text-muted);
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
-                text-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
             }
 
             @keyframes fadeUpText {
@@ -86,7 +86,7 @@ class CareersSection extends HTMLElement {
                 height: 6px;
                 background: #fff;
                 border-radius: 0 4px 4px 0;
-                box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--accent-blue), 0 0 50px var(--accent-blue), 0 0 80px var(--accent-blue);
+                box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.4);
                 animation: igniteBlade 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
                 animation-delay: 2.6s;
             }
@@ -120,7 +120,7 @@ class CareersSection extends HTMLElement {
             
             <div class="quote-container">
                 <div class="quote-wrapper">
-                    <p class="quote-text">Stay tuned, Young Skywalker!</p>
+                    <p class="quote-text">Stay tuned, DREAMER!</p>
                     <div class="skywalker-saber">
                         <div class="saber-hilt"></div>
                         <div class="saber-blade"></div>

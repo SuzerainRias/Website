@@ -12,7 +12,7 @@ class FooterSection extends HTMLElement {
                     <div class="footer-col">
                         <span class="col-title">INDEX</span>
                         <a href="index.html">HOME</a>
-                        <a href="tech.html">THE TECH</a>
+                        <a href="products.html">THE TECH</a>
                         <a href="about.html">ABOUT</a>
                         <a href="careers.html">CAREERS</a>
                     </div>

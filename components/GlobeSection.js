@@ -38,7 +38,21 @@ class GlobeSection extends HTMLElement {
         const globeGroup = new THREE.Group();
         scene.add(globeGroup);
 
-        // 2. Base Sphere Removed (Now using full dot mapping)
+        // Initial Rotation to center on Kolkata, India (Lat: 22.57° N, Lon: 88.36° E)
+        globeGroup.rotation.y = -3.113;
+        globeGroup.rotation.x = 0.394;
+
+        // 2. Base Translucent Sphere
+        const baseGeometry = new THREE.SphereGeometry(98, 64, 64);
+        const baseMaterial = new THREE.MeshPhongMaterial({
+            color: 0x1a1a1a,
+            transparent: true,
+            opacity: 0.8,
+            side: THREE.DoubleSide,
+            shininess: 15
+        });
+        const baseSphere = new THREE.Mesh(baseGeometry, baseMaterial);
+        globeGroup.add(baseSphere);
 
         // 3. Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -66,7 +80,6 @@ class GlobeSection extends HTMLElement {
             const colors = [];
             
             const colorLand = new THREE.Color(0xc4364a); // Red
-            const colorWater = new THREE.Color(0x193754); // Dim blue
             
             for (let lat = -90; lat <= 90; lat += step) {
                 const r = Math.cos(lat * Math.PI / 180) * radius;
@@ -81,18 +94,15 @@ class GlobeSection extends HTMLElement {
                     const pixelIndex = (y * canvas.width + x) * 4;
                     const brightness = imgData[pixelIndex]; 
                     
-                    const phi = (90 - lat) * (Math.PI / 180);
-                    const theta = (lon + 180) * (Math.PI / 180);
-                    const pX = -(radius * Math.sin(phi) * Math.cos(theta));
-                    const pY = radius * Math.cos(phi);
-                    const pZ = radius * Math.sin(phi) * Math.sin(theta);
-                    
-                    points.push(pX, pY, pZ);
-                    
                     if (brightness < 50) {
+                        const phi = (90 - lat) * (Math.PI / 180);
+                        const theta = (lon + 180) * (Math.PI / 180);
+                        const pX = -(radius * Math.sin(phi) * Math.cos(theta));
+                        const pY = radius * Math.cos(phi);
+                        const pZ = radius * Math.sin(phi) * Math.sin(theta);
+                        
+                        points.push(pX, pY, pZ);
                         colors.push(colorLand.r, colorLand.g, colorLand.b);
-                    } else {
-                        colors.push(colorWater.r, colorWater.g, colorWater.b);
                     }
                 }
             }
